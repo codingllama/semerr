@@ -4,7 +4,7 @@ Semantic error wrappers for Go
 
 ## Usage and documentation
 
-See https://pkg.go.dev/github.com/codingllama/sermerr.
+See https://pkg.go.dev/github.com/codingllama/semerr.
 
 ## Design Principles
 
