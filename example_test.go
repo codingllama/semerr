@@ -139,3 +139,11 @@ func ExampleFromHTTPStatus() {
 	// user not found
 	// true
 }
+
+func ExampleString() {
+	err := semerr.NotFoundError{semerr.String("user 10 not found")}
+	fmt.Println(err)
+
+	// Output:
+	// user 10 not found
+}
