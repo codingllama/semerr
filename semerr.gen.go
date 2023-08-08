@@ -59,6 +59,11 @@ var errFromStatus = map[int]func(error) error{
 	401: func(err error) error { return UnauthenticatedError{err} },
 }
 
+type semErr interface {
+	GRPCCode() Code
+	SetErr(error)
+}
+
 // CanceledError is the semantic error for Canceled.
 type CanceledError struct{ Err error }
 
@@ -70,6 +75,16 @@ func (e CanceledError) Error() string {
 	return e.Err.Error()
 }
 
+// As calls SetErr on target if it has the same GRPCCode as e.
+// Returns true if matched.
+func (e CanceledError) As(target interface{}) bool {
+	if t, ok := target.(semErr); ok && t.GRPCCode() == e.GRPCCode() {
+		t.SetErr(e.Err)
+		return true
+	}
+	return false
+}
+
 // Unwrap returns Err.
 func (e CanceledError) Unwrap() error { return e.Err }
 
@@ -78,6 +93,9 @@ func (CanceledError) GRPCCode() Code { return 1 }
 
 // HTTPStatus returns 499.
 func (CanceledError) HTTPStatus() int { return 499 }
+
+// SetErr assigns Err.
+func (e *CanceledError) SetErr(other error) { e.Err = other }
 
 // UnknownError is the semantic error for Unknown.
 type UnknownError struct{ Err error }
@@ -90,6 +108,16 @@ func (e UnknownError) Error() string {
 	return e.Err.Error()
 }
 
+// As calls SetErr on target if it has the same GRPCCode as e.
+// Returns true if matched.
+func (e UnknownError) As(target interface{}) bool {
+	if t, ok := target.(semErr); ok && t.GRPCCode() == e.GRPCCode() {
+		t.SetErr(e.Err)
+		return true
+	}
+	return false
+}
+
 // Unwrap returns Err.
 func (e UnknownError) Unwrap() error { return e.Err }
 
@@ -98,6 +126,9 @@ func (UnknownError) GRPCCode() Code { return 2 }
 
 // HTTPStatus returns 500.
 func (UnknownError) HTTPStatus() int { return 500 }
+
+// SetErr assigns Err.
+func (e *UnknownError) SetErr(other error) { e.Err = other }
 
 // InvalidArgumentError is the semantic error for InvalidArgument.
 type InvalidArgumentError struct{ Err error }
@@ -110,6 +141,16 @@ func (e InvalidArgumentError) Error() string {
 	return e.Err.Error()
 }
 
+// As calls SetErr on target if it has the same GRPCCode as e.
+// Returns true if matched.
+func (e InvalidArgumentError) As(target interface{}) bool {
+	if t, ok := target.(semErr); ok && t.GRPCCode() == e.GRPCCode() {
+		t.SetErr(e.Err)
+		return true
+	}
+	return false
+}
+
 // Unwrap returns Err.
 func (e InvalidArgumentError) Unwrap() error { return e.Err }
 
@@ -118,6 +159,9 @@ func (InvalidArgumentError) GRPCCode() Code { return 3 }
 
 // HTTPStatus returns 400.
 func (InvalidArgumentError) HTTPStatus() int { return 400 }
+
+// SetErr assigns Err.
+func (e *InvalidArgumentError) SetErr(other error) { e.Err = other }
 
 // DeadlineExceededError is the semantic error for DeadlineExceeded.
 type DeadlineExceededError struct{ Err error }
@@ -130,6 +174,16 @@ func (e DeadlineExceededError) Error() string {
 	return e.Err.Error()
 }
 
+// As calls SetErr on target if it has the same GRPCCode as e.
+// Returns true if matched.
+func (e DeadlineExceededError) As(target interface{}) bool {
+	if t, ok := target.(semErr); ok && t.GRPCCode() == e.GRPCCode() {
+		t.SetErr(e.Err)
+		return true
+	}
+	return false
+}
+
 // Unwrap returns Err.
 func (e DeadlineExceededError) Unwrap() error { return e.Err }
 
@@ -138,6 +192,9 @@ func (DeadlineExceededError) GRPCCode() Code { return 4 }
 
 // HTTPStatus returns 504.
 func (DeadlineExceededError) HTTPStatus() int { return 504 }
+
+// SetErr assigns Err.
+func (e *DeadlineExceededError) SetErr(other error) { e.Err = other }
 
 // NotFoundError is the semantic error for NotFound.
 type NotFoundError struct{ Err error }
@@ -150,6 +207,16 @@ func (e NotFoundError) Error() string {
 	return e.Err.Error()
 }
 
+// As calls SetErr on target if it has the same GRPCCode as e.
+// Returns true if matched.
+func (e NotFoundError) As(target interface{}) bool {
+	if t, ok := target.(semErr); ok && t.GRPCCode() == e.GRPCCode() {
+		t.SetErr(e.Err)
+		return true
+	}
+	return false
+}
+
 // Unwrap returns Err.
 func (e NotFoundError) Unwrap() error { return e.Err }
 
@@ -158,6 +225,9 @@ func (NotFoundError) GRPCCode() Code { return 5 }
 
 // HTTPStatus returns 404.
 func (NotFoundError) HTTPStatus() int { return 404 }
+
+// SetErr assigns Err.
+func (e *NotFoundError) SetErr(other error) { e.Err = other }
 
 // AlreadyExistsError is the semantic error for AlreadyExists.
 type AlreadyExistsError struct{ Err error }
@@ -170,6 +240,16 @@ func (e AlreadyExistsError) Error() string {
 	return e.Err.Error()
 }
 
+// As calls SetErr on target if it has the same GRPCCode as e.
+// Returns true if matched.
+func (e AlreadyExistsError) As(target interface{}) bool {
+	if t, ok := target.(semErr); ok && t.GRPCCode() == e.GRPCCode() {
+		t.SetErr(e.Err)
+		return true
+	}
+	return false
+}
+
 // Unwrap returns Err.
 func (e AlreadyExistsError) Unwrap() error { return e.Err }
 
@@ -178,6 +258,9 @@ func (AlreadyExistsError) GRPCCode() Code { return 6 }
 
 // HTTPStatus returns 409.
 func (AlreadyExistsError) HTTPStatus() int { return 409 }
+
+// SetErr assigns Err.
+func (e *AlreadyExistsError) SetErr(other error) { e.Err = other }
 
 // PermissionDeniedError is the semantic error for PermissionDenied.
 type PermissionDeniedError struct{ Err error }
@@ -190,6 +273,16 @@ func (e PermissionDeniedError) Error() string {
 	return e.Err.Error()
 }
 
+// As calls SetErr on target if it has the same GRPCCode as e.
+// Returns true if matched.
+func (e PermissionDeniedError) As(target interface{}) bool {
+	if t, ok := target.(semErr); ok && t.GRPCCode() == e.GRPCCode() {
+		t.SetErr(e.Err)
+		return true
+	}
+	return false
+}
+
 // Unwrap returns Err.
 func (e PermissionDeniedError) Unwrap() error { return e.Err }
 
@@ -198,6 +291,9 @@ func (PermissionDeniedError) GRPCCode() Code { return 7 }
 
 // HTTPStatus returns 403.
 func (PermissionDeniedError) HTTPStatus() int { return 403 }
+
+// SetErr assigns Err.
+func (e *PermissionDeniedError) SetErr(other error) { e.Err = other }
 
 // ResourceExhaustedError is the semantic error for ResourceExhausted.
 type ResourceExhaustedError struct{ Err error }
@@ -210,6 +306,16 @@ func (e ResourceExhaustedError) Error() string {
 	return e.Err.Error()
 }
 
+// As calls SetErr on target if it has the same GRPCCode as e.
+// Returns true if matched.
+func (e ResourceExhaustedError) As(target interface{}) bool {
+	if t, ok := target.(semErr); ok && t.GRPCCode() == e.GRPCCode() {
+		t.SetErr(e.Err)
+		return true
+	}
+	return false
+}
+
 // Unwrap returns Err.
 func (e ResourceExhaustedError) Unwrap() error { return e.Err }
 
@@ -218,6 +324,9 @@ func (ResourceExhaustedError) GRPCCode() Code { return 8 }
 
 // HTTPStatus returns 429.
 func (ResourceExhaustedError) HTTPStatus() int { return 429 }
+
+// SetErr assigns Err.
+func (e *ResourceExhaustedError) SetErr(other error) { e.Err = other }
 
 // FailedPreconditionError is the semantic error for FailedPrecondition.
 type FailedPreconditionError struct{ Err error }
@@ -230,6 +339,16 @@ func (e FailedPreconditionError) Error() string {
 	return e.Err.Error()
 }
 
+// As calls SetErr on target if it has the same GRPCCode as e.
+// Returns true if matched.
+func (e FailedPreconditionError) As(target interface{}) bool {
+	if t, ok := target.(semErr); ok && t.GRPCCode() == e.GRPCCode() {
+		t.SetErr(e.Err)
+		return true
+	}
+	return false
+}
+
 // Unwrap returns Err.
 func (e FailedPreconditionError) Unwrap() error { return e.Err }
 
@@ -238,6 +357,9 @@ func (FailedPreconditionError) GRPCCode() Code { return 9 }
 
 // HTTPStatus returns 400.
 func (FailedPreconditionError) HTTPStatus() int { return 400 }
+
+// SetErr assigns Err.
+func (e *FailedPreconditionError) SetErr(other error) { e.Err = other }
 
 // AbortedError is the semantic error for Aborted.
 type AbortedError struct{ Err error }
@@ -250,6 +372,16 @@ func (e AbortedError) Error() string {
 	return e.Err.Error()
 }
 
+// As calls SetErr on target if it has the same GRPCCode as e.
+// Returns true if matched.
+func (e AbortedError) As(target interface{}) bool {
+	if t, ok := target.(semErr); ok && t.GRPCCode() == e.GRPCCode() {
+		t.SetErr(e.Err)
+		return true
+	}
+	return false
+}
+
 // Unwrap returns Err.
 func (e AbortedError) Unwrap() error { return e.Err }
 
@@ -258,6 +390,9 @@ func (AbortedError) GRPCCode() Code { return 10 }
 
 // HTTPStatus returns 409.
 func (AbortedError) HTTPStatus() int { return 409 }
+
+// SetErr assigns Err.
+func (e *AbortedError) SetErr(other error) { e.Err = other }
 
 // OutOfRangeError is the semantic error for OutOfRange.
 type OutOfRangeError struct{ Err error }
@@ -270,6 +405,16 @@ func (e OutOfRangeError) Error() string {
 	return e.Err.Error()
 }
 
+// As calls SetErr on target if it has the same GRPCCode as e.
+// Returns true if matched.
+func (e OutOfRangeError) As(target interface{}) bool {
+	if t, ok := target.(semErr); ok && t.GRPCCode() == e.GRPCCode() {
+		t.SetErr(e.Err)
+		return true
+	}
+	return false
+}
+
 // Unwrap returns Err.
 func (e OutOfRangeError) Unwrap() error { return e.Err }
 
@@ -278,6 +423,9 @@ func (OutOfRangeError) GRPCCode() Code { return 11 }
 
 // HTTPStatus returns 400.
 func (OutOfRangeError) HTTPStatus() int { return 400 }
+
+// SetErr assigns Err.
+func (e *OutOfRangeError) SetErr(other error) { e.Err = other }
 
 // UnimplementedError is the semantic error for Unimplemented.
 type UnimplementedError struct{ Err error }
@@ -290,6 +438,16 @@ func (e UnimplementedError) Error() string {
 	return e.Err.Error()
 }
 
+// As calls SetErr on target if it has the same GRPCCode as e.
+// Returns true if matched.
+func (e UnimplementedError) As(target interface{}) bool {
+	if t, ok := target.(semErr); ok && t.GRPCCode() == e.GRPCCode() {
+		t.SetErr(e.Err)
+		return true
+	}
+	return false
+}
+
 // Unwrap returns Err.
 func (e UnimplementedError) Unwrap() error { return e.Err }
 
@@ -298,6 +456,9 @@ func (UnimplementedError) GRPCCode() Code { return 12 }
 
 // HTTPStatus returns 501.
 func (UnimplementedError) HTTPStatus() int { return 501 }
+
+// SetErr assigns Err.
+func (e *UnimplementedError) SetErr(other error) { e.Err = other }
 
 // InternalError is the semantic error for Internal.
 type InternalError struct{ Err error }
@@ -310,6 +471,16 @@ func (e InternalError) Error() string {
 	return e.Err.Error()
 }
 
+// As calls SetErr on target if it has the same GRPCCode as e.
+// Returns true if matched.
+func (e InternalError) As(target interface{}) bool {
+	if t, ok := target.(semErr); ok && t.GRPCCode() == e.GRPCCode() {
+		t.SetErr(e.Err)
+		return true
+	}
+	return false
+}
+
 // Unwrap returns Err.
 func (e InternalError) Unwrap() error { return e.Err }
 
@@ -318,6 +489,9 @@ func (InternalError) GRPCCode() Code { return 13 }
 
 // HTTPStatus returns 500.
 func (InternalError) HTTPStatus() int { return 500 }
+
+// SetErr assigns Err.
+func (e *InternalError) SetErr(other error) { e.Err = other }
 
 // UnavailableError is the semantic error for Unavailable.
 type UnavailableError struct{ Err error }
@@ -330,6 +504,16 @@ func (e UnavailableError) Error() string {
 	return e.Err.Error()
 }
 
+// As calls SetErr on target if it has the same GRPCCode as e.
+// Returns true if matched.
+func (e UnavailableError) As(target interface{}) bool {
+	if t, ok := target.(semErr); ok && t.GRPCCode() == e.GRPCCode() {
+		t.SetErr(e.Err)
+		return true
+	}
+	return false
+}
+
 // Unwrap returns Err.
 func (e UnavailableError) Unwrap() error { return e.Err }
 
@@ -338,6 +522,9 @@ func (UnavailableError) GRPCCode() Code { return 14 }
 
 // HTTPStatus returns 503.
 func (UnavailableError) HTTPStatus() int { return 503 }
+
+// SetErr assigns Err.
+func (e *UnavailableError) SetErr(other error) { e.Err = other }
 
 // DataLossError is the semantic error for DataLoss.
 type DataLossError struct{ Err error }
@@ -350,6 +537,16 @@ func (e DataLossError) Error() string {
 	return e.Err.Error()
 }
 
+// As calls SetErr on target if it has the same GRPCCode as e.
+// Returns true if matched.
+func (e DataLossError) As(target interface{}) bool {
+	if t, ok := target.(semErr); ok && t.GRPCCode() == e.GRPCCode() {
+		t.SetErr(e.Err)
+		return true
+	}
+	return false
+}
+
 // Unwrap returns Err.
 func (e DataLossError) Unwrap() error { return e.Err }
 
@@ -358,6 +555,9 @@ func (DataLossError) GRPCCode() Code { return 15 }
 
 // HTTPStatus returns 500.
 func (DataLossError) HTTPStatus() int { return 500 }
+
+// SetErr assigns Err.
+func (e *DataLossError) SetErr(other error) { e.Err = other }
 
 // UnauthenticatedError is the semantic error for Unauthenticated.
 type UnauthenticatedError struct{ Err error }
@@ -370,6 +570,16 @@ func (e UnauthenticatedError) Error() string {
 	return e.Err.Error()
 }
 
+// As calls SetErr on target if it has the same GRPCCode as e.
+// Returns true if matched.
+func (e UnauthenticatedError) As(target interface{}) bool {
+	if t, ok := target.(semErr); ok && t.GRPCCode() == e.GRPCCode() {
+		t.SetErr(e.Err)
+		return true
+	}
+	return false
+}
+
 // Unwrap returns Err.
 func (e UnauthenticatedError) Unwrap() error { return e.Err }
 
@@ -378,3 +588,6 @@ func (UnauthenticatedError) GRPCCode() Code { return 16 }
 
 // HTTPStatus returns 401.
 func (UnauthenticatedError) HTTPStatus() int { return 401 }
+
+// SetErr assigns Err.
+func (e *UnauthenticatedError) SetErr(other error) { e.Err = other }

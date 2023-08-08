@@ -80,6 +80,11 @@ var errFromStatus = map[int]func(error) error{
 {{- end}}
 }
 
+type semErr interface {
+	GRPCCode() Code
+	SetErr(error)
+}
+
 {{- range $i, $info := .infos}}
 
 // {{$info.Semerr}} is the semantic error for {{$info.Name}}.
@@ -93,6 +98,16 @@ func (e {{$info.Semerr}}) Error() string {
 	return e.Err.Error()
 }
 
+// As calls SetErr on target if it has the same GRPCCode as e.
+// Returns true if matched.
+func (e {{$info.Semerr}}) As(target interface{}) bool {
+	if t, ok := target.(semErr); ok && t.GRPCCode() == e.GRPCCode() {
+		t.SetErr(e.Err)
+		return true
+	}
+	return false
+}
+
 // Unwrap returns Err.
 func (e {{$info.Semerr}}) Unwrap() error { return e.Err }
 
@@ -101,6 +116,9 @@ func ({{$info.Semerr}}) GRPCCode() Code { return {{$info.Num}} }
 
 // HTTPStatus returns {{$info.HTTP}}.
 func ({{$info.Semerr}}) HTTPStatus() int { return {{$info.HTTP}} }
+
+// SetErr assigns Err.
+func (e *{{$info.Semerr}}) SetErr(other error) { e.Err = other }
 
 {{- end}}
 `))

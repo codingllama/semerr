@@ -75,6 +75,24 @@ func Example_wrap() {
 	// 5 404
 }
 
+func Example_embed() {
+	type UserNotFoundError struct {
+		semerr.NotFoundError
+	}
+
+	err := &UserNotFoundError{}
+	err.Err = errors.New("user 10 not found")
+
+	var nfe semerr.NotFoundError
+	ok := errors.As(err, &nfe)
+	fmt.Println(ok)
+	fmt.Println(nfe)
+
+	// Output:
+	// true
+	// user 10 not found
+}
+
 func ExampleGRPCCode() {
 	// nil returns OK and true.
 	code, ok := semerr.GRPCCode(nil)
