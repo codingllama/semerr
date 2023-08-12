@@ -21,14 +21,14 @@ GOLANGCI-LINT ?= golangci-lint
 
 # go install github.com/google/addlicense@latest
 ADDLICENSE ?= addlicense
-ADDLICENSE_FLAGS ?= -c 'Alan Parra' -l mit
+ADDLICENSE_FLAGS ?= -c 'Alan Parra' -l mit -ignore '**/*.yml'
 
 .PHONY: all
 all: build
 
 .PHONY: clean
 clean:
-	rm -f cover.out
+	rm -f cover.out generate
 
 .PHONY: check
 check: test
@@ -50,8 +50,7 @@ lint: lint/go lint/license
 
 .PHONY: lint/go
 lint/go:
-	$(GOLANGCI-LINT) run ./...
-	cd ./internal/cmd/generate && $(GOLANGCI-LINT) run ./...
+	$(GOLANGCI-LINT) run ./... ./internal/cmd/generate/...
 
 .PHONY: lint/license
 lint/license:
@@ -72,6 +71,15 @@ fix/license:
 fix/mod:
 	$(GO) mod tidy
 	cd ./internal/cmd/generate && $(GO) mod tidy
+
+.PHONY: git/diff
+git/diff:
+	@if [ -n "$$(git status --porcelain)" ]; then \
+		printf 'Local workspace has changes:\n\n' >&2; \
+		git status --porcelain >&2; echo; \
+		git diff >&2; \
+		exit 1; \
+	fi
 
 .PHONY: cover
 cover: cover/html
