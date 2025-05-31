@@ -29,18 +29,17 @@ import (
 func TestFrom_unmapped(t *testing.T) {
 	err1 := errors.New("an error")
 
-	fromCode := func(n interface{}, err error) error {
-		c := semerr.Code(n.(int))
+	fromCode := func(n int, err error) error {
+		//nolint:gosec // Interger overflow is not a problem here.
+		c := semerr.Code(n)
 		return semerr.FromGRPCCode(c, err)
 	}
-	fromHTTP := func(s interface{}, err error) error {
-		return semerr.FromHTTPStatus(s.(int), err)
-	}
+	fromHTTP := semerr.FromHTTPStatus
 
 	tests := []struct {
 		name string
-		fn   func(interface{}, error) error
-		in   interface{}
+		fn   func(int, error) error
+		in   int
 	}{
 		{
 			name: "FromGRPCCode(OK, $err)",

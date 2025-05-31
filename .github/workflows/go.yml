@@ -8,6 +8,7 @@ on:
     branches: [ "master" ]
   pull_request:
     branches: [ "master" ]
+  workflow_dispatch:
 
 jobs:
 
@@ -34,7 +35,7 @@ jobs:
     - name: golangci-lint
       uses: golangci/golangci-lint-action@v3
       with:
-        version: latest
+        version: v2.1.6
         args: ./... ./internal/cmd/generate/...
 
     - run: go install github.com/google/addlicense@latest
