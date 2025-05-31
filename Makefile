@@ -26,6 +26,11 @@ ADDLICENSE_FLAGS ?= -c 'Alan Parra' -l mit -ignore '**/*.yml'
 .PHONY: all
 all: build
 
+# ci partly mimics CI checks.
+# Does not run `fix` or `gen` targets to avoid dirtying the local workspace.
+.PHONY: ci
+ci: build test lint
+
 .PHONY: clean
 clean:
 	rm -f cover.out generate

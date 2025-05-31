@@ -119,6 +119,7 @@ func run() error {
 		out = os.Stdout
 	} else {
 		var err error
+		//nolint:gosec // File permissions are fine at 644.
 		out, err = os.OpenFile(*outFile, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
 		if err != nil {
 			return err

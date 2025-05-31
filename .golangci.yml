@@ -1,22 +1,24 @@
+version: "2"
 linters:
-  # Defaults, plus:
   enable:
-  - errname
-  - errorlint
-  - exportloopref
-  - gocritic
-  - godot
-  - goheader
-  - goimports
-  - gosec
-  - lll
-  - makezero
-  - misspell
-  - nilerr
-  - nilnil
-  - nolintlint
-  - prealloc
-  - revive
-  - unconvert
-  - unparam
-  - whitespace
+    - errname
+    - errorlint
+    - gocritic
+    - godot
+    - goheader
+    - gosec
+    - lll
+    - makezero
+    - misspell
+    - nilerr
+    - nilnil
+    - nolintlint
+    - prealloc
+    - revive
+    - unconvert
+    - unparam
+    - whitespace
+
+formatters:
+  enable:
+    - goimports
